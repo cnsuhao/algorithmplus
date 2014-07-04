@@ -1,6 +1,10 @@
 #ifndef ___BINARYTREE_H____ 
 #define ___BINARYTREE_H____
 
+
+#include <stack>
+using namespace std;
+
 // 二叉树节点定义
 template <class elemType>
 struct nodeType {
@@ -19,6 +23,10 @@ public:
 	void inorderTraversal();
 	void preorderTraversal();
 	void postorderTraversal();
+
+	void nonRecursiveInTraversal();
+	void nonRecursivePreTraversal();
+	void nonRecursivePostTraversal();
 
 	int treeHeight();
 	int treeNodeCount();
@@ -117,6 +125,27 @@ void binaryTreeType<elemType>::postorder(nodeType<elemType> *p) {
 		postorder(p->rlink);
 		cout << p->info << " ";
 	}
+}
+
+template<class elemType>
+void binaryTreeType<elemType>::nonRecursiveInTraversal() {
+	stack<nodeType<elemType> *> tstack;
+	nodeType<elemType> *current;
+	current = root;
+
+	while((current != NULL) || (!tstack.empty())) {
+		if (current != NULL)
+		{
+			tstack.push(current);
+			current = current->llink;
+		} else {
+			tstack.pop(current);
+			cout << current->info << " ";
+			current = current->rlink;
+		}
+	}
+
+	cout << endl;
 }
 
 template<class elemType>
