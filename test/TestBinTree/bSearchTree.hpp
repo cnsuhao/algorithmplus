@@ -146,7 +146,37 @@ void bSearchTreeType<elemType>::deleteNode(const elemType& deleteItem) {
 	if(root == NULL) {
 		cout <<"Cannot delete from the empty tree." << endl;
 	} else {
+		current = root;
 
+		while(current != NULL && !found) {
+			if(current->info == deleteItem) {
+				found = true;
+			} else {
+				trailCurrent = current;
+				if (current->info > deleteItem)
+				{
+					current = current->llink;
+				} else {
+					current = current->rlink;
+				}
+			}
+		}
+
+		if (current == NULL)
+		{
+			cout << "The delete item is not in the list." << endl;
+		} else if(found) {
+			if (current == root)
+			{
+				deleteFromTree(root);
+			} else if (trailCurrent->info > deleteItem)
+			{
+				deleteFromTree(trailCurrent->llink);
+			} else {
+				deleteFromTree(trailCurrent->rlink);
+			}
+		} // end else if
+		
 	}
 }
 
