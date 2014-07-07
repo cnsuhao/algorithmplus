@@ -3,6 +3,7 @@
 
 
 #include <stack>
+#include <queue>
 using namespace std;
 
 // 二叉树节点定义
@@ -21,8 +22,12 @@ public:
 	bool isEmpty();
 
 	void inorderTraversal();
+	void inorderTraversal(void (*visit)(elemType&))
+
 	void preorderTraversal();
 	void postorderTraversal();
+
+	void deeporderTraversal();
 
 	void nonRecursiveInTraversal();
 	void nonRecursivePreTraversal();
@@ -48,8 +53,11 @@ private:
 	void destroy(nodeType<elemType>* &p);
 
 	void inorder(nodeType<elemType> *p);
+	void inorder(nodeType<elemType> *p,void (*visit)(elemType&));
 	void preorder(nodeType<elemType> *p);
 	void postorder(nodeType<elemType> *p);
+
+	void deeporder(nodeType<elemType> *p);
 
 	int height(nodeType<elemType> *p);
 	int nodeCount(nodeType<elemType> *p);
@@ -69,6 +77,11 @@ binaryTreeType<elemType>::binaryTreeType(){
 template<class elemType>
 void binaryTreeType<elemType>::inorderTraversal() {
 	inorder(root);
+}
+
+template<class elemType>
+void binaryTreeType<elemType>::inorderTraversal(void (*visit)(elemType& item)) {
+	inorder(root,*visit);
 }
 
 template<class elemType>
@@ -108,12 +121,42 @@ void binaryTreeType<elemType>::inorder(nodeType<elemType> *p) {
 }
 
 template<class elemType>
+void binaryTreeType<elemType>::inorder(nodeType<elemType> *p,void (*visit)(elemType& item)) {
+	if (p != NULL)
+	{
+		inorder(p->llink,*visit);
+		(*visit)(p->info);
+		inorder(p->rlink,*visit);
+	}
+}
+
+template<class elemType>
 void binaryTreeType<elemType>::preorder(nodeType<elemType> *p) {
 	if (p != NULL)
 	{
 		cout << p->info << " ";
 		preorder(p->llink);
 		preorder(p->rlink);
+	}
+}
+
+template<class elemType>
+void binaryTreeType<elemType>::deeporder(nodeType<elemType> *p) {
+	if (p != NULL)
+	{
+		queue<nodeType<elemType>*> dqueue;
+		nodeType<elemType> * current;
+
+		current = p;
+
+		while(!dqueue.empty() || current!= NULL) {
+			dqueue.pop(current);
+
+			cout << current->info <<" ";
+
+			dqueue.push(current->llink);
+			dqueue.push(current->rlink);
+		}
 	}
 }
 
@@ -149,6 +192,67 @@ void binaryTreeType<elemType>::nonRecursiveInTraversal() {
 }
 
 template<class elemType>
+void binaryTreeType<elemType>::nonRecursivePreTraversal() {
+	stack<nodeType<elemType> *> tstack;
+	nodeType<elemType> *current;
+	current = root;
+
+	while((current != NULL) || (!tstack.empty())) {
+		if (current != NULL)
+		{
+			cout << current->info << " ";
+			tstack.push(current);
+			current = current->llink;
+		} else {
+			tstack.pop(current);
+			current = current->rlink;
+		}
+	}
+
+	cout << endl;
+}
+
+template<class elemType>
+void binaryTreeType<elemType>::nonRecursivePostTraversal() {
+	stack<nodeType<elemType>*> tstack;
+	stack<int> istack;
+	nodeType<elemType> *current = root;
+
+	int v = 0;
+
+	if (current == NULL) 
+	{
+		cout <<"The binary tree is empty" << endl;
+	} else {
+		tstack.push(current);
+		istack.push(1);
+		current = current->llink;
+
+		while(!tstack.empty() && !istack.empty()) {
+			if (current != NULL && v == 0)
+			{
+				tstack.push(current);
+				istack.push(1);
+				current = current->llink;
+			} else {
+				tstack.pop(current);
+				istack.pop(v);
+
+				if (v == 1)
+				{
+					tstack.push(current);
+					istack.push(2);
+					current = current->rlink;
+					v = 0;
+				} else {
+					cout << current->info << " ";
+				}
+			}
+		}
+	}
+}
+
+template<class elemType>
 int binaryTreeType<elemType>::height(nodeType<elemType> *p) {
 	if (p == NULL)
 	{
@@ -160,28 +264,24 @@ int binaryTreeType<elemType>::height(nodeType<elemType> *p) {
 
 template<class elemType>
 int binaryTreeType<elemType>::nodeCount(nodeType<elemType> *p) {
-	int ic = 0;
 	if (p == NULL)
 	{
-		return ic;
+		return 0;
 	} else {
-		// todo
+		return 1 + nodeCount(p->llink) + nodeCount(p->rlink);
 	}
-
-	return ic;
 }
 
 template<class elemType>
 int binaryTreeType<elemType>::leavesCount(nodeType<elemType> *p) {
-	int ic = 0;
 	if (p == NULL)
 	{
-		return ic;
+		return 0;
+	} else if ((p->llink == NULL && p->rlink == NULL)){
+		return 1;
 	} else {
-		// todo
-	} 
-
-	return ic;
+		return 1 + leavesCount(p->llink) + leavesCount(p->rlink);
+	}
 }
 
 template<class elemType>
