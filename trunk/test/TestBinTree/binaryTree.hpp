@@ -25,6 +25,8 @@ public:
 	void inorderTraversal(void (*visit)(elemType&))
 
 	void preorderTraversal();
+	void preorderTraversal(void (*visit)(elemType&));
+
 	void postorderTraversal();
 
 	void deeporderTraversal();
@@ -55,6 +57,7 @@ private:
 	void inorder(nodeType<elemType> *p);
 	void inorder(nodeType<elemType> *p,void (*visit)(elemType&));
 	void preorder(nodeType<elemType> *p);
+	void preorder(nodeType<elemType> *p, void (*visit)(elemType&))
 	void postorder(nodeType<elemType> *p);
 
 	void deeporder(nodeType<elemType> *p);
@@ -83,6 +86,12 @@ template<class elemType>
 void binaryTreeType<elemType>::inorderTraversal(void (*visit)(elemType& item)) {
 	inorder(root,*visit);
 }
+
+template<class elemType>
+void binaryTreeType<elemType>::preorderTraversal(void (*visit)(elemType&)) {
+	preorder(root,*visit);
+}
+
 
 template<class elemType>
 void binaryTreeType<elemType>::preorderTraversal() {
@@ -137,6 +146,16 @@ void binaryTreeType<elemType>::preorder(nodeType<elemType> *p) {
 		cout << p->info << " ";
 		preorder(p->llink);
 		preorder(p->rlink);
+	}
+}
+
+template<class elemType>
+void binaryTreeType<elemType>::preorder(nodeType<elemType> *p,void (*visit)(elemType& item)) {
+	if (p != NULL)
+	{
+		(*visit)(p->info);
+		preorder(p->llink, *visit);
+		preorder(p->rlink, *visit);
 	}
 }
 
